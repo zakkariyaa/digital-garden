@@ -1,4 +1,5 @@
 import typer
+from .parser import load_all_notes
 
 app = typer.Typer()
 
@@ -6,4 +7,9 @@ app = typer.Typer()
 def hello():
     print("🌱 Digital Garden CLI ready!")
 
-# Usage: python main.py hello
+
+@app.command()
+def list_notes():
+    notes = load_all_notes()
+    for note in notes:
+        print(f'{note.title} - Tags: {note.tags} - Links: {note.links}')
