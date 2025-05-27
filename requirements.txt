@@ -1,0 +1,8 @@
+markdown
+python-frontmatter
+networkx
+pyvis
+spacy
+sentence-transformers
+scikit-learn
+typer
