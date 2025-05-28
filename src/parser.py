@@ -4,6 +4,7 @@ import frontmatter
 import re
 from .config import NOTES_PATH
 from pathlib import Path
+from datetime import date, datetime
 
 
 @dataclass
@@ -23,10 +24,14 @@ def load_note(file_path: Path) -> Note:
     content = post.content
     links = extract_links(content)
 
+    created = post.get('created', '')
+    if isinstance(created, (date, datetime)):
+        created = str(created)
+
     return Note(
         title=post.get('title', file_path.stem),
         tags=post.get('tags', []),
-        created=post.get('created', ''),
+        created=created,
         content=content,
         links=links
     )
