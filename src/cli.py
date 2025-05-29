@@ -102,6 +102,6 @@ def suggest_related(title: str, method: str = "tfidf"):
         print(f"[red]Note titled '{title}' not found.[/red]")
         return
 
-    print(f"[bold green]Related notes for:[/bold green] {title}")
+    print(f"[bold green]Related notes for: [/bold green] {title}")
     for other_title, score in similarities[title][:5]:
         print(f" • {other_title} [dim](score: {score:.2f})[/dim]")
