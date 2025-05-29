@@ -47,7 +47,7 @@ def connected_to(title: str):
     links = list(G.successors(title))
     backlinks = list(G.predecessors(title))
 
-    print(f"\n[bold green]{title}[/] links to:")
+    print(f"\n[bold green]{title}[/] links to: ")
     for node in links:
         print(f"→ {node}")
 
