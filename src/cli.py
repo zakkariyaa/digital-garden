@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import matplotlib.cm as cm
 from src.semantic import compute_similarity_tfidf, get_top_related_notes, detect_clusters
+from src.nlp_engine import summarise
 
 
 app = typer.Typer()
@@ -108,3 +109,17 @@ def visualize_graph(threshold: float = 0.5, save: bool = False):
         print("[blue]📸 Graph saved as clustered-note-graph.png[/]")
     else:
         plt.show()
+
+
+@app.command()
+def summarise_note(title: str, method: str = "transformer"):
+    """Summarise a single note by title using sumy."""
+    notes = load_all_notes()
+    note = next((n for n in notes if n.title.lower() == title.lower()), None)
+    if not note:
+        print(f"[red]Note titled '{title}' not found.[/red]")
+        return
+
+    print(f"[bold green]Summary for:[/] {note.title} ({method})\n")
+    summary = summarise(note.content)
+    print(summary)
