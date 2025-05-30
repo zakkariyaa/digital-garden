@@ -4,7 +4,8 @@ from .graph import build_graph
 from rich import print
 import matplotlib.pyplot as plt
 import networkx as nx
-from src.semantic import compute_similarity_tfidf, compute_similarity_embeddings, get_top_related_notes
+import matplotlib.cm as cm
+from src.semantic import compute_similarity_tfidf, get_top_related_notes, detect_clusters
 
 
 app = typer.Typer()
@@ -67,51 +68,43 @@ def connected_to(title: str):
 
 
 @app.command()
-def visualize_graph(save: bool = False):
+def visualize_graph(threshold: float = 0.5, save: bool = False):
     """Render a graph of notes and their links."""
     notes = load_all_notes()
-    graph = build_graph(notes)
+    sim_dict = compute_similarity_tfidf(notes)
+    clusters = detect_clusters(sim_dict, threshold)
+    G = build_graph(notes)
+
+    # Assign cluster IDs
+    note_to_cluster = {}
+    for i, cluster in enumerate(clusters):
+        for note in cluster:
+            note_to_cluster[note] = i
+
+    # Assign colors
+    num_clusters = len(clusters)
+    color_map = cm.get_cmap("tab10", num_clusters)
+    node_colors = [
+        color_map(note_to_cluster.get(node, 0)) for node in G.nodes
+    ]
 
     plt.figure(figsize=(10, 8))
-    pos = nx.spring_layout(graph, seed=42)
-
+    pos = nx.spring_layout(G, seed=42)
     nx.draw(
-        graph,
+        G,
         pos,
         with_labels=True,
-        node_color="lightgreen",
+        node_color=node_colors,
         edge_color="gray",
         node_size=2000,
         font_size=10,
-        font_weight="bold",
+        font_weight="bold"
     )
-
-    plt.title("Digital Garden Note Graph")
+    plt.title("Digital Garden - Note Clusters")
     plt.tight_layout()
-    print("[green]📈 Showing graph window...[/]")
 
     if save:
-        plt.savefig("note-graph.png")
-        print("[blue]📸 Graph saved as note-graph.png[/]")
+        plt.savefig("clustered-note-graph.png")
+        print("[blue]📸 Graph saved as clustered-note-graph.png[/]")
     else:
         plt.show()
-
-
-# @app.command()
-# def suggest_related(title: str, method: str = "tfidf"):
-#     """
-#     Suggest notes similar to the given note title.
-#     --method: 'tfidf' (default) or 'embed'
-#     """
-#     notes = load_all_notes()
-#     sim_func = compute_similarity_tfidf if method == "tfidf" else compute_similarity_embeddings
-
-#     similarities = sim_func(notes)
-
-#     if title not in similarities:
-#         print(f"[red]Note titled '{title}' not found.[/red]")
-#         return
-
-#     print(f"[bold green]Related notes for: [/bold green] {title}")
-#     for other_title, score in similarities[title][:5]:
-#         print(f" • {other_title} [dim](score: {score:.2f})[/dim]")
