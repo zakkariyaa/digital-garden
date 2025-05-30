@@ -1,8 +1,10 @@
-from typing import List, Dict, Tuple
+import json
+from typing import List, Dict, Optional, Tuple
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from sentence_transformers import SentenceTransformer
 import numpy as np
+from pathlib import Path
 
 from src.parser import Note
 
@@ -38,3 +40,42 @@ def _build_similarity_dict(titles: List[str], sim_matrix: np.ndarray) -> Dict[st
         ]
         similarity_dict[title] = sorted(scores, key=lambda x: x[1], reverse=True)
     return similarity_dict
+
+
+def get_top_related_notes(note: Note, all_notes: List[Note], n: int = 3) -> List[Tuple[str, float]]:
+    similarities = _load_similarity_cache()
+    if not similarities:
+        similarities = compute_similarity_tfidf(all_notes)
+        _save_similarity_cache(similarities)
+    else:
+        similarities = compute_similarity_tfidf(all_notes)
+        _save_similarity_cache(similarities)
+
+    if note.title not in similarities:
+        print(f"[red]Note titled '{note.title}' not found.[/red]")
+        return
+
+    return similarities[note.title][:n]
+
+
+def _save_similarity_cache(similarity_dict: Dict[str, List[Tuple[str, float]]]):
+    path = Path("data") / "similarities.json"
+
+    # Convert tuples to lists for JSON compatibility
+    safe_data = {
+        k: [[title, score] for title, score in v]
+        for k, v in similarity_dict.items()
+    }
+
+    with open(path, "w") as f:
+        json.dump(safe_data, f, indent=2)
+
+
+
+def _load_similarity_cache() -> Optional[Dict[str, List[Tuple[str, float]]]]:
+    path = Path("data") / "similarities.json"
+    if not path.exists() or path.stat().st_size == 0:
+        return None
+    with open(path) as f:
+        return {k: [(title, float(score)) for title, score in v] for k, v in json.load(f).items()}
+

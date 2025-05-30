@@ -4,7 +4,7 @@ from .graph import build_graph
 from rich import print
 import matplotlib.pyplot as plt
 import networkx as nx
-from src.semantic import compute_similarity_tfidf, compute_similarity_embeddings
+from src.semantic import compute_similarity_tfidf, compute_similarity_embeddings, get_top_related_notes
 
 
 app = typer.Typer()
@@ -18,7 +18,17 @@ def hello():
 def list_notes():
     notes = load_all_notes()
     for note in notes:
-        print(f'{note.title} - Tags: {note.tags} - Links: {note.links}')
+        print(f'📒 Note: {note.title}')
+        print(f'Tags: {note.tags}')
+        print(f'Created: {note.created}')
+        print(f'Links: {note.links}')
+
+        print(f'Top Related Notes: ')
+        top_related_notes = get_top_related_notes(note, notes, 3)
+        for other_title, score in top_related_notes:
+            print(f"\t • {other_title} [dim](score: {score:.2f})[/dim]")
+        
+        print()
 
 
 @app.command()
@@ -87,21 +97,21 @@ def visualize_graph(save: bool = False):
         plt.show()
 
 
-@app.command()
-def suggest_related(title: str, method: str = "tfidf"):
-    """
-    Suggest notes similar to the given note title.
-    --method: 'tfidf' (default) or 'embed'
-    """
-    notes = load_all_notes()
-    sim_func = compute_similarity_tfidf if method == "tfidf" else compute_similarity_embeddings
+# @app.command()
+# def suggest_related(title: str, method: str = "tfidf"):
+#     """
+#     Suggest notes similar to the given note title.
+#     --method: 'tfidf' (default) or 'embed'
+#     """
+#     notes = load_all_notes()
+#     sim_func = compute_similarity_tfidf if method == "tfidf" else compute_similarity_embeddings
 
-    similarities = sim_func(notes)
+#     similarities = sim_func(notes)
 
-    if title not in similarities:
-        print(f"[red]Note titled '{title}' not found.[/red]")
-        return
+#     if title not in similarities:
+#         print(f"[red]Note titled '{title}' not found.[/red]")
+#         return
 
-    print(f"[bold green]Related notes for: [/bold green] {title}")
-    for other_title, score in similarities[title][:5]:
-        print(f" • {other_title} [dim](score: {score:.2f})[/dim]")
+#     print(f"[bold green]Related notes for: [/bold green] {title}")
+#     for other_title, score in similarities[title][:5]:
+#         print(f" • {other_title} [dim](score: {score:.2f})[/dim]")
