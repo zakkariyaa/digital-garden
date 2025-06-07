@@ -27,6 +27,12 @@ cd digital-garden
 pip install -e .
 ```
 
+Then use it like so
+```bash
+digital-garden list-notes
+digital-garden ...
+```
+
 
 ## 📁 Note Format
 Markdown notes live in notes/ and must start with YAML frontmatter:
