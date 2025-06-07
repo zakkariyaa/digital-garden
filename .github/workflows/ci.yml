@@ -19,6 +19,10 @@ jobs:
         source venv/bin/activate
         pip install -r requirements.txt
         pip install pytest
+        pip install python-frontmatter
+    
+    - name: Download spaCy model
+      run: python -m spacy download en_core_web_sm
 
     - name: Run tests
       run: |

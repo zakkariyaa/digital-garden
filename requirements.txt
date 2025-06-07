@@ -2,7 +2,7 @@ markdown
 pyvis
 spacy
 typer[all]
-frontmatter
+python-frontmatter
 rich
 matplotlib
 networkx
