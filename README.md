@@ -52,7 +52,7 @@ This is my note body. It links to [[Other Note]].
 python main.py list-notes
 python main.py create-note "My Note" --tags "dev,ideas"
 python main.py suggest-tags "My Note"
-python main.py visualize-graph --method embed
+python main.py visualize-graph
 python main.py stats
 ```
 
@@ -65,3 +65,4 @@ python main.py --help
 ```
 PYTHONPATH=./ pytest
 ```
+![CI](https://github.com/zakkariyaa/digital-garden/actions/workflows/ci.yml/badge.svg)
