@@ -1,4 +1,8 @@
+import os
+import frontmatter
 import typer
+from typing import Optional
+from pathlib import Path
 from .parser import load_all_notes
 from .graph import build_graph
 from rich import print
@@ -6,7 +10,8 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import matplotlib.cm as cm
 from src.semantic import compute_similarity_tfidf, get_top_related_notes, detect_clusters
-from src.nlp_engine import summarise
+from src.nlp import summarise, extract_tags, extract_keywords
+from datetime import datetime
 
 
 app = typer.Typer()
@@ -123,3 +128,114 @@ def summarise_note(title: str, method: str = "transformer"):
     print(f"[bold green]Summary for:[/] {note.title} ({method})\n")
     summary = summarise(note.content)
     print(summary)
+
+
+@app.command()
+def suggest_tags(title: str):
+    """Suggest tags for a given note based on its content."""
+    notes = load_all_notes()
+    note = next((n for n in notes if n.title.lower() == title.lower()), None)
+    if not note:
+        print(f"[red]Note titled '{title}' not found.[/red]")
+        return
+
+    print(f"[bold green]Suggested tags for:[/] {note.title}")
+    tags = extract_tags(note.content)
+    for tag, freq in tags:
+        print(f"• {tag} [dim](freq: {freq})[/dim]")
+
+
+@app.command()
+def extract_keywords_cmd(title: str):
+    """Extract top keywords from note content using YAKE."""
+    notes = load_all_notes()
+    note = next((n for n in notes if n.title.lower() == title.lower()), None)
+    if not note:
+        print(f"[red]Note titled '{title}' not found.[/red]")
+        return
+
+    print(f"[bold green]Keywords for:[/] {note.title}")
+    keywords = extract_keywords(note.content)
+    for word, score in keywords:
+        print(f"• {word} [dim](score: {score:.4f})[/dim]")
+
+
+@app.command()
+def create_note(title: str, tags: Optional[str] = "", folder: str = "notes"):
+    """Create a new markdown note with frontmatter."""
+    safe_title = title.strip().replace(" ", "_")
+    filename = f"{safe_title}.md"
+    path = Path(folder) / filename
+
+    if path.exists():
+        print(f"[red]Note '{filename}' already exists.[/red]")
+        return
+
+    created = datetime.now().date().isoformat()
+    tags_list = [t.strip() for t in tags.split(",") if t.strip()]
+
+    frontmatter = [
+        "---",
+        f"title: {title}",
+        f"tags: {tags_list}",
+        f"created: {created}",
+        "---\n\n"
+    ]
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w") as f:
+        f.write("\n".join(frontmatter))
+        f.write("Write your note here...")
+
+    print(f"[green]✅ Created:[/] {path}")
+
+
+@app.command()
+def rename_note(old_title: str, new_title: str):
+    """Rename a note by title."""
+    notes = load_all_notes()
+    old_note = next((n for n in notes if n.title.lower() == old_title.lower()), None)
+    if not old_note:
+        print(f"[red]Note titled '{old_title}' not found.[/red]")
+        return
+
+    notes_dir = Path("notes")
+    for file in notes_dir.glob("*.md"):
+        loaded = frontmatter.load(file)
+        if loaded.get("title", "").lower() == old_title.lower():
+            new_filename = new_title.strip().replace(" ", "_") + ".md"
+            new_path = notes_dir / new_filename
+            file.rename(new_path)
+
+            # Optionally update the title in frontmatter
+            loaded["title"] = new_title
+            with open(new_path, "w") as f:
+                f.write(frontmatter.dumps(loaded))
+
+            print(f"[green]✅ Renamed:[/] {file.name} → {new_path.name}")
+            return
+
+    print("[red]Original file not found in note directory.[/red]")
+
+
+@app.command()
+def delete_note(title: str, confirm: bool = False):
+    """Delete a note by title (requires --confirm to proceed)."""
+    notes = load_all_notes()
+    note = next((n for n in notes if n.title.lower() == title.lower()), None)
+    if not note:
+        print(f"[red]Note titled '{title}' not found.[/red]")
+        return
+
+    file_path = next((Path("notes") / f for f in os.listdir("notes") if f.lower().endswith(".md") and title.lower() in f.lower()), None)
+    if not file_path:
+        print("[red]File not found.[/red]")
+        return
+
+    if not confirm:
+        print(f"[yellow]Add --confirm to actually delete '{file_path.name}'[/yellow]")
+        return
+
+    file_path.unlink()
+    print(f"[red]❌ Deleted:[/] {file_path.name}")
+
