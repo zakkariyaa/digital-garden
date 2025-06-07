@@ -7,11 +7,13 @@ from .parser import load_all_notes
 from .graph import build_graph
 from rich import print
 import matplotlib.pyplot as plt
-import networkx as nx
 import matplotlib.cm as cm
+import networkx as nx
 from src.semantic import compute_similarity_tfidf, get_top_related_notes, detect_clusters
 from src.nlp import summarise, extract_tags, extract_keywords
 from datetime import datetime
+from collections import Counter
+from src.graph import build_graph
 
 
 app = typer.Typer()
@@ -239,3 +241,35 @@ def delete_note(title: str, confirm: bool = False):
     file_path.unlink()
     print(f"[red]❌ Deleted:[/] {file_path.name}")
 
+
+@app.command()
+def stats():
+    """Show garden-level stats and analytics."""
+    notes = load_all_notes()
+    total = len(notes)
+    total_words = sum(len(n.content.split()) for n in notes)
+    avg_words = total_words / total if total else 0
+
+    all_tags = [tag for note in notes for tag in note.tags]
+    tag_counts = Counter(all_tags).most_common()
+
+    G = build_graph(notes)
+    degrees = G.degree()
+    top_connected = sorted(degrees, key=lambda x: -x[1])[:5]
+    unlinked = [n.title for n in notes if G.degree(n.title) == 0]
+
+    print(f"[bold green]📊 Digital Garden Stats[/bold green]")
+    print(f"• Total notes: {total}")
+    print(f"• Avg word count: {avg_words:.1f}")
+    print(f"• Total tags: {len(set(all_tags))}")
+    print(f"• Top tags:")
+    for tag, count in tag_counts[:5]:
+        print(f"   - {tag} ({count})")
+
+    print("\n• Most linked notes:")
+    for title, degree in top_connected:
+        print(f"   - {title} ({degree} links)")
+
+    print("\n• Orphan notes (no links):")
+    for title in unlinked:
+        print(f"   - {title}")

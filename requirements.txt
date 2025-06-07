@@ -1,8 +1,13 @@
 markdown
-python-frontmatter
-networkx
 pyvis
 spacy
+typer[all]
+frontmatter
+rich
+matplotlib
+networkx
 sentence-transformers
 scikit-learn
-typer
+sumy
+yake
+pytest
