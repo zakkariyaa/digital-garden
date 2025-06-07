@@ -7,8 +7,7 @@ import numpy as np
 from pathlib import Path
 import networkx as nx
 from networkx.algorithms.community import label_propagation_communities
-
-from digital_garden.parser import Note
+from src.parser import Note
 
 
 def compute_similarity_tfidf(notes: List[Note]) -> Dict[str, List[Tuple[str, float]]]:

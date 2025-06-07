@@ -1,2 +1,0 @@
-[console_scripts]
-digital-garden = digital_garden.cli:app

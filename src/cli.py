@@ -9,11 +9,11 @@ import matplotlib.cm as cm
 import networkx as nx
 from datetime import datetime
 from collections import Counter
-from digital_garden.parser import load_all_notes
-from digital_garden.graph import build_graph
-from digital_garden.semantic import compute_similarity_tfidf, get_top_related_notes, detect_clusters
-from digital_garden.nlp import summarise, extract_tags, extract_keywords
-from digital_garden.graph import build_graph
+from src.parser import load_all_notes
+from src.graph import build_graph
+from src.semantic import compute_similarity_tfidf, get_top_related_notes, detect_clusters
+from src.nlp import summarise, extract_tags, extract_keywords
+from src.graph import build_graph
 
 
 app = typer.Typer()

@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import List
 import frontmatter
 import re
-from .config import NOTES_PATH
+from src.config import NOTES_PATH
 from pathlib import Path
 from datetime import date, datetime
 
