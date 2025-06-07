@@ -1,0 +1,15 @@
+Metadata-Version: 2.4
+Name: digital-garden
+Version: 0.1.0
+Summary: CLI for managing a markdown-based digital garden
+Author-email: Zakarie Yaris <info@zakariya.me>
+Requires-Dist: typer[all]
+Requires-Dist: rich
+Requires-Dist: python-frontmatter
+Requires-Dist: matplotlib
+Requires-Dist: networkx
+Requires-Dist: sentence-transformers
+Requires-Dist: scikit-learn
+Requires-Dist: spacy
+Requires-Dist: sumy
+Requires-Dist: yake

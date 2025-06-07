@@ -1,6 +1,6 @@
 from networkx import DiGraph
 from typing import List
-from src.parser import Note
+from digital_garden.parser import Note
 
 
 def build_graph(notes: List[Note]) -> DiGraph:

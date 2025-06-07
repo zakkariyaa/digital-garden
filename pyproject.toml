@@ -1,0 +1,26 @@
+[project]
+name = "digital-garden"
+version = "0.1.0"
+description = "CLI for managing a markdown-based digital garden"
+authors = [{ name = "Zakarie Yaris", email = "info@zakariya.me" }]
+dependencies = [
+    "typer[all]",
+    "rich",
+    "python-frontmatter",
+    "matplotlib",
+    "networkx",
+    "sentence-transformers",
+    "scikit-learn",
+    "spacy",
+    "sumy",
+    "yake",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.scripts]
+digital-garden = "digital_garden.cli:app"

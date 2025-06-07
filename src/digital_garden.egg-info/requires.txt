@@ -1,0 +1,10 @@
+typer[all]
+rich
+python-frontmatter
+matplotlib
+networkx
+sentence-transformers
+scikit-learn
+spacy
+sumy
+yake
