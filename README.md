@@ -65,4 +65,4 @@ python main.py --help
 ```
 PYTHONPATH=./ pytest
 ```
-![CI](https://github.com/zakkariyaa/digital-garden/actions/workflows/ci.yml/badge.svg)
+![TESTS](https://github.com/zakkariyaa/digital-garden/actions/workflows/ci.yml/badge.svg)
