@@ -1,6 +1,7 @@
 # 🌱 Digital Garden Engine
 
-A command-line tool for managing and exploring a personal digital garden of markdown notes. Powered by semantic search, graph theory, and NLP.
+A command-line tool for managing and exploring a personal digital garden of markdown notes. Powered by semantic search, graph theory, and NLP. <br /><br />
+![screenshot](https://github.com/zakkariyaa/digital-garden/blob/main/digital-garden.png)
 
 ---
 
