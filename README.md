@@ -1,12 +1,12 @@
 # 🌱 Digital Garden Engine
 
-A command-line tool for managing and exploring a personal digital garden of markdown notes — powered by semantic search, graph theory, and NLP.
+A command-line tool for managing and exploring a personal digital garden of markdown notes. Powered by semantic search, graph theory, and NLP.
 
 ---
 
 ## ✨ Features
 
-- 🔍 Full-text search and semantic similarity between notes
+- 🔍 Full text search and semantic similarity between notes
 - 📚 Markdown note parsing with frontmatter (title, tags, created)
 - 🧠 Smart tag suggestions and keyword extraction
 - 🔗 Bidirectional link detection (`[[Note]]`)
@@ -65,4 +65,4 @@ python main.py --help
 ```
 PYTHONPATH=./ pytest
 ```
-![CI](https://github.com/zakkariyaa/digital-garden/actions/workflows/ci.yml/badge.svg)
+![TESTS](https://github.com/zakkariyaa/digital-garden/actions/workflows/ci.yml/badge.svg)
